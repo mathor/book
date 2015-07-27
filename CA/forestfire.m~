@@ -1,0 +1,20 @@
+n = 200;           % 表示森林矩阵的尺寸: n x n
+Pltg = 5e-6;       % 闪电的概率
+Pgrw = 1e-2;       % 生长的概率
+NW = [n 1:n-1];    % 用于构造北邻居veg(NW,:)和西邻居veg(:,NW)
+SE = [2:n   1];    % 用于构造南邻居veg(SE,:)和东邻居veg(SE,:)
+veg = zeros(n);    % veg = {0表示空, 1表示火, 2表示树}
+imh = image( cat(3,(veg==1),(veg==2),zeros(n)) ); §\label{cod:imageVeg}§
+
+for i=1:3000
+    % 周围四个邻居中状态为火的数量
+    num =            (veg(NW,:)==1) + ...                §\label{cod:sumFire1}§
+        (veg(:,NW)==1)     +      (veg(:,SE)==1) + ...   §\label{cod:sumFire2}§
+                     (veg(SE,:)==1);                     §\label{cod:sumFire3}§
+
+    veg = 2*( (veg==2) | (veg==0 & rand(n)<Pgrw) ) - ... §\label{cod:updateVeg1}§
+            ( (veg==2) & (num >0 | rand(n)<Pltg) );      §\label{cod:updateVeg2}§
+
+    set(imh, 'cdata', cat(3,(veg==1),(veg==2),zeros(n)) ); §\label{cod:setVeg}§
+    drawnow
+end
